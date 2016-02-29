@@ -1179,6 +1179,41 @@ class NativeArray {
       fail("Expected: " #statement " throws an exception.\n" \
            "  Actual: it doesn't.")
 
+#define GTEST_TEST_THROW_W_MESSAGE_(statement, expected_exception, regex, fail) \
+    GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+    if (::testing::internal::ConstCharPtr gtest_msg = "") { \
+      bool gtest_caught_expected = false; \
+      try { \
+        GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
+      } \
+      catch (expected_exception const& x) { \
+        const ::testing::internal::RE& gtest_regex = (regex); \
+        if (::testing::internal::RE::FullMatch(x.message(), gtest_regex)) { \
+          gtest_caught_expected = true; \
+        } else { \
+          gtest_msg.value = \
+            "Expected: " #statement " throws an exception of type " \
+            #expected_exception " with message matching " regex ".\n" \
+            "  Actual: it throws that exception with a different message."; \
+          goto GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__); \
+        } \
+      } \
+      catch (...) { \
+        gtest_msg.value = \
+          "Expected: " #statement " throws an exception of type " \
+          #expected_exception ".\n  Actual: it throws a different type."; \
+        goto GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__); \
+      } \
+      if (!gtest_caught_expected) { \
+        gtest_msg.value = \
+          "Expected: " #statement " throws an exception of type " \
+          #expected_exception ".\n  Actual: it throws nothing."; \
+        goto GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__); \
+      } \
+    } else \
+      GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__): \
+      fail(gtest_msg.value)
+
 
 // Implements Boolean test assertions such as EXPECT_TRUE. expression can be
 // either a boolean expression or an AssertionResult. text is a textual

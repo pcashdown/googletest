@@ -1846,12 +1846,16 @@ class TestWithParam : public Test, public WithParamInterface<T> {
   GTEST_TEST_NO_THROW_(statement, GTEST_NONFATAL_FAILURE_)
 #define EXPECT_ANY_THROW(statement) \
   GTEST_TEST_ANY_THROW_(statement, GTEST_NONFATAL_FAILURE_)
+#define EXPECT_THROW_W_MESSAGE(statement, expected_exception, regex) \
+  GTEST_TEST_THROW_W_MESSAGE_(statement, expected_exception, regex, GTEST_NONFATAL_FAILURE_)
 #define ASSERT_THROW(statement, expected_exception) \
   GTEST_TEST_THROW_(statement, expected_exception, GTEST_FATAL_FAILURE_)
 #define ASSERT_NO_THROW(statement) \
   GTEST_TEST_NO_THROW_(statement, GTEST_FATAL_FAILURE_)
 #define ASSERT_ANY_THROW(statement) \
   GTEST_TEST_ANY_THROW_(statement, GTEST_FATAL_FAILURE_)
+#define ASSERT_THROW_W_MESSAGE(statement, expected_exception, regex) \
+  GTEST_TEST_THROW_W_MESSAGE_(statement, expected_exception, regex, GTEST_FATAL_FAILURE_)
 
 // Boolean assertions. Condition can be either a Boolean expression or an
 // AssertionResult. For more information on how to use AssertionResult with
